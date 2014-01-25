@@ -9,6 +9,8 @@
 using namespace std;
 
 void GenerateKey(BYTE vk);
+void GenerateReleaseKey(BYTE vk);
+bool aIsPressed = false;
 
 bool SetWindow(LPCSTR name){
 	HWND hwnd = FindWindowA(NULL,name);
@@ -22,11 +24,14 @@ bool SetWindow(LPCSTR name){
 
 void PressedA(){
 	GenerateKey((UCHAR)VkKeyScan('a'));
+	aIsPressed = true;
 }
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	if (!SetWindow("World of Warcraft"))
+	if (SetWindow("World of Warcraft"))
+		cout << "Game detected\n";
+	else
 		cout << "Could not find game\n";
 	//test to make sure a controller is detected
 	DWORD dwResult;
@@ -50,6 +55,10 @@ int _tmain(int argc, _TCHAR* argv[])
 				PressedA();
 				cout << "a was pressed\n";
 			}
+			else if (aIsPressed){
+				GenerateReleaseKey((UCHAR)VkKeyScan('a'));
+				aIsPressed = false;
+			}
 		}
 	}
 	return 0;
@@ -62,5 +71,14 @@ void GenerateKey(BYTE vk){
 	input.type = INPUT_KEYBOARD;
 	input.ki.dwFlags = KEYEVENTF_EXTENDEDKEY;
 	input.ki.wVk = vk;
+	SendInput(1,&input,sizeof(input));
+}
+
+void GenerateReleaseKey(BYTE vk){
+	INPUT input;
+	ZeroMemory(&input,sizeof(input));
+	input.type = INPUT_KEYBOARD;
+	input.ki.dwFlags = KEYEVENTF_KEYUP;
+	input.ki.wVk = (UCHAR)VkKeyScan(vk);
 	SendInput(1,&input,sizeof(input));
 }
