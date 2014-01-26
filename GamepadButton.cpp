@@ -2,15 +2,18 @@
 #include "GamepadButton.h"
 
 
-GamepadButton::GamepadButton(char s)
+
+GamepadButton::GamepadButton(){}
+
+GamepadButton::GamepadButton(int x)
 {
-	symbol = s;
+	id = x;
 	pressed = false;
-	switch (symbol){
-		case 'a': id = XINPUT_GAMEPAD_A; break;
-		case 'b': id = XINPUT_GAMEPAD_B; break;
-		case 'x': id = XINPUT_GAMEPAD_X; break;
-		case 'y': id = XINPUT_GAMEPAD_Y; break;
+	switch (x){
+		case XINPUT_GAMEPAD_A: symbol = '1'; break;
+		case XINPUT_GAMEPAD_B: symbol = '2'; break;
+		case XINPUT_GAMEPAD_X: symbol = '3'; break;
+		case XINPUT_GAMEPAD_Y: symbol = '4'; break;
 	}
 }
 
@@ -21,8 +24,8 @@ GamepadButton::~GamepadButton(void)
 
 //returns 0 if unpressed, 1 if pressed, 2 if released
 int GamepadButton::IsPressed(XINPUT_GAMEPAD gamepad){
-	if ( (gamepad.wButtons & XINPUT_GAMEPAD_A) ){
-		// to trigger only on the first press, add: && (pressed == false)
+	if ( (gamepad.wButtons & id) && (pressed == false)){
+		// to trigger only on the first press, add: 
 		pressed = true;
 		return 1;
 	}

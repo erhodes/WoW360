@@ -8,7 +8,8 @@ protected:
 	int id;
 	bool pressed;
 public:
-	GamepadButton(char s);
+	GamepadButton();
+	GamepadButton(int x);
 	~GamepadButton(void);
 
 	int IsPressed(XINPUT_GAMEPAD gamepad);

@@ -44,16 +44,25 @@ int _tmain(int argc, _TCHAR* argv[])
 	} else{
 		cout << "No controller detected \n";
 	}
+
 	//set up for the main loop
 	DWORD lastPacketNumber = 0;
 	XINPUT_GAMEPAD gamepad;
-	GamepadButton aButton('a');
+	int numButtons = 4;
+	GamepadButton* buttons;
+	buttons = new GamepadButton[numButtons];
+	buttons[0] = GamepadButton(XINPUT_GAMEPAD_A);
+	buttons[1] = GamepadButton(XINPUT_GAMEPAD_B);
+	buttons[2] = GamepadButton(XINPUT_GAMEPAD_X);
+	buttons[3] = GamepadButton(XINPUT_GAMEPAD_Y);
 	//the main loop!
 	while (true){
 		dwResult = XInputGetState(controllerNumber, &state);
 		if (state.dwPacketNumber != lastPacketNumber){
 			lastPacketNumber = state.dwPacketNumber;
-			IsButtonPressed(&aButton,&state);
+			for (int i = 0; i < 4; i++){
+				IsButtonPressed(&buttons[i],&state);
+			}
 		}
 	}
 	return 0;
@@ -63,8 +72,7 @@ void IsButtonPressed(GamepadButton* b, XINPUT_STATE* state){
 	int x = b->IsPressed(state->Gamepad);
 	switch (x){
 		case 0: break;
-		case 1: GenerateKey((UCHAR)VkKeyScan(b->GetSymbol()));
-			cout << "registered\n"; break;
+		case 1: GenerateKey((UCHAR)VkKeyScan(b->GetSymbol())); break;
 		case 2: GenerateReleaseKey((UCHAR)VkKeyScan(b->GetSymbol()));break;
 	}
 	return;
