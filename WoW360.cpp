@@ -2,15 +2,16 @@
 //
 #pragma once
 #include "stdafx.h"
-#include <iostream>
-#include <Windows.h>
-#include <Xinput.h>
+#include "GameInput.h"
+#include "GamepadButton.h"
 
 using namespace std;
 
+//function definitions
 void GenerateKey(BYTE vk);
 void GenerateReleaseKey(BYTE vk);
 bool aIsPressed = false;
+void IsButtonPressed(GamepadButton* b, XINPUT_STATE* state);
 
 bool SetWindow(LPCSTR name){
 	HWND hwnd = FindWindowA(NULL,name);
@@ -46,22 +47,27 @@ int _tmain(int argc, _TCHAR* argv[])
 	//set up for the main loop
 	DWORD lastPacketNumber = 0;
 	XINPUT_GAMEPAD gamepad;
+	GamepadButton aButton('a');
 	//the main loop!
 	while (true){
 		dwResult = XInputGetState(controllerNumber, &state);
 		if (state.dwPacketNumber != lastPacketNumber){
 			lastPacketNumber = state.dwPacketNumber;
-			if (state.Gamepad.wButtons & XINPUT_GAMEPAD_A){
-				PressedA();
-				cout << "a was pressed\n";
-			}
-			else if (aIsPressed){
-				GenerateReleaseKey((UCHAR)VkKeyScan('a'));
-				aIsPressed = false;
-			}
+			IsButtonPressed(&aButton,&state);
 		}
 	}
 	return 0;
+}
+
+void IsButtonPressed(GamepadButton* b, XINPUT_STATE* state){
+	int x = b->IsPressed(state->Gamepad);
+	switch (x){
+		case 0: break;
+		case 1: GenerateKey((UCHAR)VkKeyScan(b->GetSymbol()));
+			cout << "registered\n"; break;
+		case 2: GenerateReleaseKey((UCHAR)VkKeyScan(b->GetSymbol()));break;
+	}
+	return;
 }
 
 
