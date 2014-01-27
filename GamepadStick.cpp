@@ -33,6 +33,7 @@ int GamepadStick::IsPressed(XINPUT_GAMEPAD gamepad){
 		DirectionHelper('w',LY, LY_DEADZONE,&pressedForward);
 		DirectionHelper('s',-LY, LY_DEADZONE,&pressedBackward);
 	} else {
+		//TODO: clean up this mess. Ugh.
 		float RX = gamepad.sThumbRX;
 		float RY = gamepad.sThumbRY;
 		DirectionHelper('a',-RX, RX_DEADZONE, &pressedRight);

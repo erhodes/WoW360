@@ -6,12 +6,14 @@ class GamepadButton :
 {
 protected:
 	bool pressed;
+	BYTE virtualKey;
 public:
 	GamepadButton();
 	GamepadButton(int x);
 	~GamepadButton(void);
 
 	int IsPressed(XINPUT_GAMEPAD gamepad);
+	BYTE GetSymbol() {return virtualKey; }
 
 };
 

@@ -10,11 +10,16 @@ GamepadButton::GamepadButton(int x)
 	id = x;
 	pressed = false;
 	switch (x){
-		case XINPUT_GAMEPAD_A: symbol = '1'; break;
-		case XINPUT_GAMEPAD_B: symbol = '2'; break;
-		case XINPUT_GAMEPAD_X: symbol = '3'; break;
-		case XINPUT_GAMEPAD_Y: symbol = '4'; break;
-		case XINPUT_GAMEPAD_RIGHT_SHOULDER: symbol = '5'; break;
+		case XINPUT_GAMEPAD_A: virtualKey = '1'; break;
+		case XINPUT_GAMEPAD_B: virtualKey = '3'; break;
+		case XINPUT_GAMEPAD_X: virtualKey = '1'; break;
+		case XINPUT_GAMEPAD_Y: virtualKey = '2'; break;
+		case XINPUT_GAMEPAD_RIGHT_SHOULDER: virtualKey = VK_TAB; break;
+		case XINPUT_GAMEPAD_DPAD_UP: virtualKey = '4'; break;
+		case XINPUT_GAMEPAD_DPAD_RIGHT: virtualKey = '5'; break;
+		case XINPUT_GAMEPAD_DPAD_LEFT: virtualKey = '6'; break;
+		case XINPUT_GAMEPAD_DPAD_DOWN: virtualKey = '7'; break;
+		case XINPUT_GAMEPAD_START: virtualKey = VK_SPACE; break;
 	}
 }
 
