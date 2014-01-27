@@ -5,6 +5,7 @@ class GameInput
 {
 protected:
 	char symbol;
+	int id;
 public:
 	GameInput();
 	~GameInput(void);

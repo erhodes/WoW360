@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "GameInput.h"
 #include "GamepadButton.h"
+#include "GamepadStick.h"
 
 using namespace std;
 
@@ -13,6 +14,9 @@ void GenerateReleaseKey(BYTE vk);
 bool aIsPressed = false;
 void IsButtonPressed(GamepadButton* b, XINPUT_STATE* state);
 
+float LX_DEADZONE = 10000;
+float LY_DEADZONE = 3000;
+
 bool SetWindow(LPCSTR name){
 	HWND hwnd = FindWindowA(NULL,name);
 	if (hwnd == NULL){
@@ -21,11 +25,6 @@ bool SetWindow(LPCSTR name){
 		SetForegroundWindow(hwnd);
 		return true;
 	}
-}
-
-void PressedA(){
-	GenerateKey((UCHAR)VkKeyScan('a'));
-	aIsPressed = true;
 }
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -55,6 +54,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	buttons[1] = GamepadButton(XINPUT_GAMEPAD_B);
 	buttons[2] = GamepadButton(XINPUT_GAMEPAD_X);
 	buttons[3] = GamepadButton(XINPUT_GAMEPAD_Y);
+	GamepadStick lStick(0);
 	//the main loop!
 	while (true){
 		dwResult = XInputGetState(controllerNumber, &state);
@@ -63,6 +63,21 @@ int _tmain(int argc, _TCHAR* argv[])
 			for (int i = 0; i < 4; i++){
 				IsButtonPressed(&buttons[i],&state);
 			}
+			lStick.IsPressed(state.Gamepad);
+			//left thumbstick (aka movement)
+			/*
+			float LX = state.Gamepad.sThumbLX;
+			if ( LX < -LX_DEADZONE){
+				cout << "left!" << endl;
+				GenerateKey('q');
+			} else if (LX > LX_DEADZONE){
+				cout << "right!" << endl;
+				GenerateKey('e');
+			} else {
+				GenerateReleaseKey('q');
+				GenerateReleaseKey('e');
+			}
+			*/
 		}
 	}
 	return 0;
@@ -72,8 +87,8 @@ void IsButtonPressed(GamepadButton* b, XINPUT_STATE* state){
 	int x = b->IsPressed(state->Gamepad);
 	switch (x){
 		case 0: break;
-		case 1: GenerateKey((UCHAR)VkKeyScan(b->GetSymbol())); break;
-		case 2: GenerateReleaseKey((UCHAR)VkKeyScan(b->GetSymbol()));break;
+		case 1: GenerateKey(b->GetSymbol()); break;
+		case 2: GenerateReleaseKey(b->GetSymbol());break;
 	}
 	return;
 }
@@ -84,7 +99,7 @@ void GenerateKey(BYTE vk){
 	ZeroMemory(&input,sizeof(input));
 	input.type = INPUT_KEYBOARD;
 	input.ki.dwFlags = KEYEVENTF_EXTENDEDKEY;
-	input.ki.wVk = vk;
+	input.ki.wVk = (UCHAR)VkKeyScan(vk);
 	SendInput(1,&input,sizeof(input));
 }
 

@@ -5,7 +5,6 @@ class GamepadButton :
 	public GameInput
 {
 protected:
-	int id;
 	bool pressed;
 public:
 	GamepadButton();
