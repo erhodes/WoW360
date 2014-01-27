@@ -6,8 +6,6 @@
 #include "GamepadButton.h"
 #include "GamepadStick.h"
 
-using namespace std;
-
 //function definitions
 void IsButtonPressed(GamepadButton* b, XINPUT_STATE* state);
 
@@ -41,7 +39,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//set up for the main loop
 	DWORD lastPacketNumber = 0;
 	XINPUT_GAMEPAD gamepad;
-	int numButtons = 10;
+	int numButtons = 12;
 	GamepadButton* buttons;
 	buttons = new GamepadButton[numButtons];
 	buttons[0] = GamepadButton(XINPUT_GAMEPAD_A);
@@ -54,6 +52,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	buttons[7] = GamepadButton(XINPUT_GAMEPAD_DPAD_DOWN);
 	buttons[8] = GamepadButton(XINPUT_GAMEPAD_DPAD_RIGHT);
 	buttons[9] = GamepadButton(XINPUT_GAMEPAD_START);
+	buttons[10] = GamepadButton(GamepadButton::LEFT_TRIGGER);
+	buttons[11] = GamepadButton(GamepadButton::RIGHT_TRIGGER);
 	GamepadStick lStick(GamepadStick::LEFT_STICK);
 	GamepadStick rStick(GamepadStick::RIGHT_STICK);
 	//the main loop!

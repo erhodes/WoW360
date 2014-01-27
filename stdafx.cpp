@@ -12,7 +12,7 @@ void GenerateKey(BYTE vk){
 	ZeroMemory(&input,sizeof(input));
 	input.type = INPUT_KEYBOARD;
 	input.ki.dwFlags = KEYEVENTF_EXTENDEDKEY;
-	input.ki.wVk = (UCHAR)VkKeyScan(vk);
+	input.ki.wVk = vk;
 	SendInput(1,&input,sizeof(input));
 }
 
@@ -20,7 +20,7 @@ void GenerateReleaseKey(BYTE vk){
 	INPUT input;
 	ZeroMemory(&input,sizeof(input));
 	input.type = INPUT_KEYBOARD;
-	input.ki.dwFlags = KEYEVENTF_KEYUP;
-	input.ki.wVk = (UCHAR)VkKeyScan(vk);
+	input.ki.dwFlags = KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP;
+	input.ki.wVk = vk;
 	SendInput(1,&input,sizeof(input));
 }

@@ -2,9 +2,9 @@
 #include "GamepadStick.h"
 
 float GamepadStick::LX_DEADZONE = 10000;
-float GamepadStick::LY_DEADZONE = 6000;
-float GamepadStick::RX_DEADZONE = 10000;
-float GamepadStick::RY_DEADZONE = 8000;
+float GamepadStick::LY_DEADZONE = 10000;
+float GamepadStick::RX_DEADZONE = 12000;
+float GamepadStick::RY_DEADZONE = 9000;
 int GamepadStick::LEFT_STICK = 0;
 int GamepadStick::RIGHT_STICK = 1;
 
@@ -76,10 +76,10 @@ int GamepadStick::IsPressed(XINPUT_GAMEPAD gamepad){
 
 void GamepadStick::DirectionHelper(char s, float dir, float deadzone, bool* pressed){
 	if (dir > deadzone){
-		GenerateKey(s);
+		GenerateKey((UCHAR)VkKeyScan(s));
 		*pressed = true;
 	} else if (*pressed == true){
-		GenerateReleaseKey(s);
+		GenerateReleaseKey((UCHAR)VkKeyScan(s));
 		*pressed = false;
 	}
 }

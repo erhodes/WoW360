@@ -14,6 +14,8 @@
 #include <iostream>
 #include <Xinput.h>
 
+using namespace std;
+
 
 void GenerateKey(BYTE vk);
 void GenerateReleaseKey(BYTE vk);
