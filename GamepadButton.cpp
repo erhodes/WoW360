@@ -14,6 +14,7 @@ GamepadButton::GamepadButton(int x)
 		case XINPUT_GAMEPAD_B: symbol = '2'; break;
 		case XINPUT_GAMEPAD_X: symbol = '3'; break;
 		case XINPUT_GAMEPAD_Y: symbol = '4'; break;
+		case XINPUT_GAMEPAD_RIGHT_SHOULDER: symbol = '5'; break;
 	}
 }
 

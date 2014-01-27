@@ -15,5 +15,7 @@
 #include <Xinput.h>
 
 
+void GenerateKey(BYTE vk);
+void GenerateReleaseKey(BYTE vk);
 
 // TODO: reference additional headers your program requires here

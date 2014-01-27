@@ -2,7 +2,11 @@
 #include "GamepadStick.h"
 
 float GamepadStick::LX_DEADZONE = 10000;
-float GamepadStick::LY_DEADZONE = 5000;
+float GamepadStick::LY_DEADZONE = 6000;
+float GamepadStick::RX_DEADZONE = 10000;
+float GamepadStick::RY_DEADZONE = 8000;
+int GamepadStick::LEFT_STICK = 0;
+int GamepadStick::RIGHT_STICK = 1;
 
 GamepadStick::GamepadStick(int x)
 {
@@ -10,7 +14,7 @@ GamepadStick::GamepadStick(int x)
 	pressedRight = false;
 	pressedForward = false;
 	pressedBackward = false;
-	direction = 0;
+	type = x;
 }
 
 
@@ -20,57 +24,61 @@ GamepadStick::~GamepadStick(void)
 
 //returns 0 if unpressed, 1 if pressed, 2 if released
 int GamepadStick::IsPressed(XINPUT_GAMEPAD gamepad){
-	float LX = gamepad.sThumbLX;
-	float LY = gamepad.sThumbLY;
-	//move left?
-	if ( LX < -LX_DEADZONE){
-		GenerateKey('q');
-		pressedLeft = true;
-	} else if (pressedLeft == true){
-		pressedLeft = false;
-		GenerateReleaseKey('q');
-	}
-	//move right?
-	if ( LX > LX_DEADZONE){
-		GenerateKey('e');
-		pressedRight = true;
-	} else if (pressedRight == true){
-		pressedRight = false;
-		GenerateReleaseKey('e');
-	}
-	//move forwards?
-	if (LY > LY_DEADZONE){
-		GenerateKey('w');
-		pressedForward = true;
-	} else if (pressedForward == true){
-		GenerateReleaseKey('w');
-		pressedForward = false;
-	}
-	//move backwards?
-	if (LY < -LY_DEADZONE){
-		GenerateKey('s');
-		pressedBackward = true;
-	} else if (pressedBackward == true){
-		GenerateReleaseKey('s');
-		pressedBackward = false;
+	int scollSpeed = 10;
+	if (type == LEFT_STICK){
+		float LX = gamepad.sThumbLX;
+		float LY = gamepad.sThumbLY;
+		DirectionHelper('q',-LX,LX_DEADZONE,&pressedRight);
+		DirectionHelper('e',LX, LX_DEADZONE,&pressedLeft);
+		DirectionHelper('w',LY, LY_DEADZONE,&pressedForward);
+		DirectionHelper('s',-LY, LY_DEADZONE,&pressedBackward);
+	} else {
+		float RX = gamepad.sThumbRX;
+		float RY = gamepad.sThumbRY;
+		DirectionHelper('a',-RX, RX_DEADZONE, &pressedRight);
+		DirectionHelper('d', RX, RX_DEADZONE, &pressedLeft);
+		if (RY > RY_DEADZONE){
+			pressedForward = true;
+			INPUT input;
+			ZeroMemory(&input,sizeof(input));
+			input.type = INPUT_MOUSE;
+			input.mi.dy = scollSpeed;
+			input.mi.dwFlags = MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_MOVE;
+			SendInput(1,&input,sizeof(input));
+		} else if (pressedForward){
+			pressedForward = false;
+			INPUT input;
+			ZeroMemory(&input,sizeof(input));
+			input.type = INPUT_MOUSE;
+			input.mi.dwFlags = MOUSEEVENTF_LEFTUP;
+			SendInput(1,&input,sizeof(input));
+		}
+		if (RY < -RY_DEADZONE){
+			pressedBackward = true;
+			INPUT input;
+			ZeroMemory(&input,sizeof(input));
+			input.type = INPUT_MOUSE;
+			input.mi.dy = -scollSpeed;
+			input.mi.dwFlags = MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_MOVE;
+			SendInput(1,&input,sizeof(input));
+		} else if (pressedBackward){
+			pressedBackward = false;
+			INPUT input;
+			ZeroMemory(&input,sizeof(input));
+			input.type = INPUT_MOUSE;
+			input.mi.dwFlags = MOUSEEVENTF_LEFTUP;
+			SendInput(1,&input,sizeof(input));
+		}
 	}
 	return 1;
 }
 
-void GamepadStick::GenerateKey(BYTE vk){
-	INPUT input;
-	ZeroMemory(&input,sizeof(input));
-	input.type = INPUT_KEYBOARD;
-	input.ki.dwFlags = KEYEVENTF_EXTENDEDKEY;
-	input.ki.wVk = (UCHAR)VkKeyScan(vk);
-	SendInput(1,&input,sizeof(input));
-}
-
-void GamepadStick::GenerateReleaseKey(BYTE vk){
-	INPUT input;
-	ZeroMemory(&input,sizeof(input));
-	input.type = INPUT_KEYBOARD;
-	input.ki.dwFlags = KEYEVENTF_KEYUP;
-	input.ki.wVk = (UCHAR)VkKeyScan(vk);
-	SendInput(1,&input,sizeof(input));
+void GamepadStick::DirectionHelper(char s, float dir, float deadzone, bool* pressed){
+	if (dir > deadzone){
+		GenerateKey(s);
+		*pressed = true;
+	} else if (*pressed == true){
+		GenerateReleaseKey(s);
+		*pressed = false;
+	}
 }

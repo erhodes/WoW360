@@ -9,13 +9,7 @@
 using namespace std;
 
 //function definitions
-void GenerateKey(BYTE vk);
-void GenerateReleaseKey(BYTE vk);
-bool aIsPressed = false;
 void IsButtonPressed(GamepadButton* b, XINPUT_STATE* state);
-
-float LX_DEADZONE = 10000;
-float LY_DEADZONE = 3000;
 
 bool SetWindow(LPCSTR name){
 	HWND hwnd = FindWindowA(NULL,name);
@@ -47,37 +41,26 @@ int _tmain(int argc, _TCHAR* argv[])
 	//set up for the main loop
 	DWORD lastPacketNumber = 0;
 	XINPUT_GAMEPAD gamepad;
-	int numButtons = 4;
+	int numButtons = 5;
 	GamepadButton* buttons;
 	buttons = new GamepadButton[numButtons];
 	buttons[0] = GamepadButton(XINPUT_GAMEPAD_A);
 	buttons[1] = GamepadButton(XINPUT_GAMEPAD_B);
 	buttons[2] = GamepadButton(XINPUT_GAMEPAD_X);
 	buttons[3] = GamepadButton(XINPUT_GAMEPAD_Y);
-	GamepadStick lStick(0);
+	buttons[4] = GamepadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER);
+	GamepadStick lStick(GamepadStick::LEFT_STICK);
+	GamepadStick rStick(GamepadStick::RIGHT_STICK);
 	//the main loop!
 	while (true){
 		dwResult = XInputGetState(controllerNumber, &state);
 		if (state.dwPacketNumber != lastPacketNumber){
 			lastPacketNumber = state.dwPacketNumber;
-			for (int i = 0; i < 4; i++){
+			for (int i = 0; i < numButtons; i++){
 				IsButtonPressed(&buttons[i],&state);
 			}
 			lStick.IsPressed(state.Gamepad);
-			//left thumbstick (aka movement)
-			/*
-			float LX = state.Gamepad.sThumbLX;
-			if ( LX < -LX_DEADZONE){
-				cout << "left!" << endl;
-				GenerateKey('q');
-			} else if (LX > LX_DEADZONE){
-				cout << "right!" << endl;
-				GenerateKey('e');
-			} else {
-				GenerateReleaseKey('q');
-				GenerateReleaseKey('e');
-			}
-			*/
+			rStick.IsPressed(state.Gamepad);
 		}
 	}
 	return 0;
@@ -91,23 +74,4 @@ void IsButtonPressed(GamepadButton* b, XINPUT_STATE* state){
 		case 2: GenerateReleaseKey(b->GetSymbol());break;
 	}
 	return;
-}
-
-
-void GenerateKey(BYTE vk){
-	INPUT input;
-	ZeroMemory(&input,sizeof(input));
-	input.type = INPUT_KEYBOARD;
-	input.ki.dwFlags = KEYEVENTF_EXTENDEDKEY;
-	input.ki.wVk = (UCHAR)VkKeyScan(vk);
-	SendInput(1,&input,sizeof(input));
-}
-
-void GenerateReleaseKey(BYTE vk){
-	INPUT input;
-	ZeroMemory(&input,sizeof(input));
-	input.type = INPUT_KEYBOARD;
-	input.ki.dwFlags = KEYEVENTF_KEYUP;
-	input.ki.wVk = (UCHAR)VkKeyScan(vk);
-	SendInput(1,&input,sizeof(input));
 }
