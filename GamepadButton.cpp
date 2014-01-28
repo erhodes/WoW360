@@ -16,17 +16,23 @@ GamepadButton::GamepadButton(int x)
 	ZeroMemory(&signal,sizeof(signal));
 	ZeroMemory(&signal,sizeof(releaseSignal));
 	switch (x){
-		case XINPUT_GAMEPAD_A: virtualKey = 0; signal.mi.dwFlags=MOUSEEVENTF_LEFTDOWN,
+		case XINPUT_GAMEPAD_LEFT_THUMB: signal.mi.dwFlags=MOUSEEVENTF_LEFTDOWN,
 			releaseSignal.mi.dwFlags = MOUSEEVENTF_LEFTUP, simulateMouse=true; break;
-		case XINPUT_GAMEPAD_B: virtualKey = '3'; break;
-		case XINPUT_GAMEPAD_X: virtualKey = '1'; break;
-		case XINPUT_GAMEPAD_Y: virtualKey = '2'; break;
-		case XINPUT_GAMEPAD_RIGHT_SHOULDER: virtualKey = VK_TAB; break;
+		case XINPUT_GAMEPAD_RIGHT_THUMB: signal.mi.dwFlags=MOUSEEVENTF_RIGHTDOWN,
+			releaseSignal.mi.dwFlags = MOUSEEVENTF_RIGHTUP, simulateMouse=true; break;
+		case XINPUT_GAMEPAD_A: virtualKey = '1'; break;
+		case XINPUT_GAMEPAD_B: virtualKey = VK_ESCAPE; break;
+		case XINPUT_GAMEPAD_X: virtualKey = '2'; break;
+		case XINPUT_GAMEPAD_Y: virtualKey = '3'; break;
+		case XINPUT_GAMEPAD_RIGHT_SHOULDER: virtualKey = (UCHAR)VkKeyScan('e'); break;
+		case XINPUT_GAMEPAD_LEFT_SHOULDER: virtualKey = (UCHAR)VkKeyScan('q'); break;
 		case XINPUT_GAMEPAD_DPAD_UP: virtualKey = '4'; break;
 		case XINPUT_GAMEPAD_DPAD_RIGHT: virtualKey = '5'; break;
 		case XINPUT_GAMEPAD_DPAD_LEFT: virtualKey = '6'; break;
 		case XINPUT_GAMEPAD_DPAD_DOWN: virtualKey = '7'; break;
 		case XINPUT_GAMEPAD_START: virtualKey = VK_SPACE; break;
+		case XINPUT_GAMEPAD_BACK: virtualKey = VK_TAB; break;
+		
 		case RIGHT_TRIGGER: virtualKey = VK_RSHIFT;Pressed = &GamepadButton::PressedTrigger; break;
 		case LEFT_TRIGGER: virtualKey = VK_LCONTROL;Pressed = &GamepadButton::PressedTrigger; break;
 	}
@@ -49,7 +55,7 @@ GamepadButton::~GamepadButton(void)
 }
 
 bool GamepadButton::PressedButton(XINPUT_GAMEPAD gamepad){
-	return (gamepad.wButtons & id) && (pressed == false);
+	return (gamepad.wButtons & id);
 }
 
 bool GamepadButton::PressedTrigger(XINPUT_GAMEPAD gamepad){

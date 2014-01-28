@@ -24,51 +24,39 @@ GamepadStick::~GamepadStick(void)
 
 //returns 0 if unpressed, 1 if pressed, 2 if released
 int GamepadStick::IsPressed(XINPUT_GAMEPAD gamepad){
-	int scollSpeed = 10;
+	int scrollSpeed = 10;
 	if (type == LEFT_STICK){
 		float LX = gamepad.sThumbLX;
 		float LY = gamepad.sThumbLY;
-		DirectionHelper('q',-LX,LX_DEADZONE,&pressedRight);
-		DirectionHelper('e',LX, LX_DEADZONE,&pressedLeft);
+		DirectionHelper('a',-LX,LX_DEADZONE,&pressedRight);
+		DirectionHelper('d',LX, LX_DEADZONE,&pressedLeft);
 		DirectionHelper('w',LY, LY_DEADZONE,&pressedForward);
 		DirectionHelper('s',-LY, LY_DEADZONE,&pressedBackward);
 	} else {
 		//TODO: clean up this mess. Ugh.
 		float RX = gamepad.sThumbRX;
 		float RY = gamepad.sThumbRY;
-		DirectionHelper('a',-RX, RX_DEADZONE, &pressedRight);
-		DirectionHelper('d', RX, RX_DEADZONE, &pressedLeft);
+		//DirectionHelper('a',-RX, RX_DEADZONE, &pressedRight);
+		//DirectionHelper('d', RX, RX_DEADZONE, &pressedLeft);
 		if (RY > RY_DEADZONE){
 			pressedForward = true;
-			INPUT input;
-			ZeroMemory(&input,sizeof(input));
-			input.type = INPUT_MOUSE;
-			input.mi.dy = scollSpeed;
-			input.mi.dwFlags = MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_MOVE;
-			SendInput(1,&input,sizeof(input));
+			GenerateClick(MOUSEEVENTF_MOVE,-scrollSpeed,0);
 		} else if (pressedForward){
 			pressedForward = false;
-			INPUT input;
-			ZeroMemory(&input,sizeof(input));
-			input.type = INPUT_MOUSE;
-			input.mi.dwFlags = MOUSEEVENTF_LEFTUP;
-			SendInput(1,&input,sizeof(input));
+		//	GenerateClick(MOUSEEVENTF_LEFTUP,0,0);
 		}
 		if (RY < -RY_DEADZONE){
 			pressedBackward = true;
-			INPUT input;
-			ZeroMemory(&input,sizeof(input));
-			input.type = INPUT_MOUSE;
-			input.mi.dy = -scollSpeed;
-			input.mi.dwFlags = MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_MOVE;
-			SendInput(1,&input,sizeof(input));
+			GenerateClick(MOUSEEVENTF_MOVE,scrollSpeed,0);
 		} else if (pressedBackward){
 			pressedBackward = false;
-			INPUT input;
-			ZeroMemory(&input,sizeof(input));
-			input.type = INPUT_MOUSE;
-			input.mi.dwFlags = MOUSEEVENTF_LEFTUP;
-			SendInput(1,&input,sizeof(input));
+			//because theres currently no clicks involved, no button release is necessary
+		}
+		if (RX > RX_DEADZONE){
+			GenerateClick(MOUSEEVENTF_MOVE,0,scrollSpeed);
+		}
+		if (RX < -RX_DEADZONE){
+			GenerateClick(MOUSEEVENTF_MOVE,0,-scrollSpeed);
 		}
 	}
 	return 1;

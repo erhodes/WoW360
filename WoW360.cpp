@@ -39,7 +39,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//set up for the main loop
 	DWORD lastPacketNumber = 0;
 	XINPUT_GAMEPAD gamepad;
-	int numButtons = 12;
+	int numButtons = 16;
 	GamepadButton* buttons;
 	buttons = new GamepadButton[numButtons];
 	buttons[0] = GamepadButton(XINPUT_GAMEPAD_A);
@@ -54,6 +54,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	buttons[9] = GamepadButton(XINPUT_GAMEPAD_START);
 	buttons[10] = GamepadButton(GamepadButton::LEFT_TRIGGER);
 	buttons[11] = GamepadButton(GamepadButton::RIGHT_TRIGGER);
+	buttons[12] = GamepadButton(XINPUT_GAMEPAD_RIGHT_THUMB);
+	buttons[13] = GamepadButton(XINPUT_GAMEPAD_LEFT_THUMB);
+	buttons[14] = GamepadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER);
+	buttons[15] = GamepadButton(XINPUT_GAMEPAD_LEFT_SHOULDER);
 	GamepadStick lStick(GamepadStick::LEFT_STICK);
 	GamepadStick rStick(GamepadStick::RIGHT_STICK);
 	//the main loop!

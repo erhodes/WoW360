@@ -32,9 +32,10 @@ void GenerateClick(DWORD flags, LONG y, LONG x){
 	input.mi.dy = y;
 	input.mi.dx = x;
 	input.mi.dwFlags = flags;
+	SendInput(1,&input,sizeof(input));
 }
 
-void GenerateClickRelase(DWORD flags){
+void GenerateClickRelease(DWORD flags){
 	INPUT input;
 	ZeroMemory(&input,sizeof(input));
 	input.type = INPUT_MOUSE;
