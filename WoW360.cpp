@@ -62,7 +62,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		if (state.dwPacketNumber != lastPacketNumber){
 			lastPacketNumber = state.dwPacketNumber;
 			for (int i = 0; i < numButtons; i++){
-				IsButtonPressed(&buttons[i],&state);
+				//IsButtonPressed(&buttons[i],&state);
+				buttons[i].IsPressed(state.Gamepad);
 			}
 			lStick.IsPressed(state.Gamepad);
 			rStick.IsPressed(state.Gamepad);

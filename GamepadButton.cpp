@@ -10,9 +10,14 @@ GamepadButton::GamepadButton(int x)
 {
 	id = x;
 	pressed = false;
+	simulateMouse = false;
 	Pressed = &GamepadButton::PressedButton;
+	
+	ZeroMemory(&signal,sizeof(signal));
+	ZeroMemory(&signal,sizeof(releaseSignal));
 	switch (x){
-		case XINPUT_GAMEPAD_A: virtualKey = '1'; break;
+		case XINPUT_GAMEPAD_A: virtualKey = 0; signal.mi.dwFlags=MOUSEEVENTF_LEFTDOWN,
+			releaseSignal.mi.dwFlags = MOUSEEVENTF_LEFTUP, simulateMouse=true; break;
 		case XINPUT_GAMEPAD_B: virtualKey = '3'; break;
 		case XINPUT_GAMEPAD_X: virtualKey = '1'; break;
 		case XINPUT_GAMEPAD_Y: virtualKey = '2'; break;
@@ -24,6 +29,17 @@ GamepadButton::GamepadButton(int x)
 		case XINPUT_GAMEPAD_START: virtualKey = VK_SPACE; break;
 		case RIGHT_TRIGGER: virtualKey = VK_RSHIFT;Pressed = &GamepadButton::PressedTrigger; break;
 		case LEFT_TRIGGER: virtualKey = VK_LCONTROL;Pressed = &GamepadButton::PressedTrigger; break;
+	}
+	if (!simulateMouse){
+	signal.type = INPUT_KEYBOARD;
+	signal.ki.dwFlags = KEYEVENTF_EXTENDEDKEY;
+	signal.ki.wVk = virtualKey;
+	releaseSignal.type = INPUT_KEYBOARD;
+	releaseSignal.ki.dwFlags = KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP;
+	releaseSignal.ki.wVk = virtualKey;
+	} else {
+		signal.type = INPUT_MOUSE;
+		releaseSignal.type = INPUT_MOUSE;
 	}
 }
 
@@ -55,11 +71,11 @@ int GamepadButton::IsPressed(XINPUT_GAMEPAD gamepad){
 	if ( (this->*Pressed)(gamepad)){
 		// to trigger only on the first press, add: 
 		pressed = true;
-		return 1;
+		SendInput(1,&signal,sizeof(signal));
 	}
 	else if (pressed){
 		pressed = false;
-		cout << "releasing button" << endl;
+		SendInput(1,&releaseSignal,sizeof(releaseSignal));
 		return 2;
 	}
 	else{

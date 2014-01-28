@@ -6,7 +6,8 @@ class GamepadButton :
 {
 protected:
 	static BYTE TRIGGER_THRESHOLD;
-	bool pressed;
+	INPUT signal, releaseSignal;
+	bool pressed, simulateMouse;
 	BYTE virtualKey;
 	bool (GamepadButton::*Pressed)(XINPUT_GAMEPAD);
 	bool PressedButton(XINPUT_GAMEPAD);

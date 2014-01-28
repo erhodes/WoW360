@@ -24,3 +24,20 @@ void GenerateReleaseKey(BYTE vk){
 	input.ki.wVk = vk;
 	SendInput(1,&input,sizeof(input));
 }
+
+void GenerateClick(DWORD flags, LONG y, LONG x){
+	INPUT input;
+	ZeroMemory(&input,sizeof(input));
+	input.type = INPUT_MOUSE;
+	input.mi.dy = y;
+	input.mi.dx = x;
+	input.mi.dwFlags = flags;
+}
+
+void GenerateClickRelase(DWORD flags){
+	INPUT input;
+	ZeroMemory(&input,sizeof(input));
+	input.type = INPUT_MOUSE;
+	input.mi.dwFlags = flags;
+	SendInput(1,&input,sizeof(input));
+}
