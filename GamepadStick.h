@@ -1,7 +1,5 @@
 #pragma once
-#include "gameinput.h"
-class GamepadStick :
-	public GameInput
+class GamepadStick
 {
 protected:
 	static float LX_DEADZONE, RX_DEADZONE, LY_DEADZONE, RY_DEADZONE;

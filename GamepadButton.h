@@ -1,14 +1,13 @@
 #pragma once
-#include "gameinput.h"
 
-class GamepadButton :
-	public GameInput
+class GamepadButton
 {
 protected:
 	static BYTE TRIGGER_THRESHOLD;
 	INPUT signal, releaseSignal;
 	bool pressed, simulateMouse;
 	BYTE virtualKey;
+	int id;
 	bool (GamepadButton::*Pressed)(XINPUT_GAMEPAD);
 	bool PressedButton(XINPUT_GAMEPAD);
 	bool PressedTrigger(XINPUT_GAMEPAD);

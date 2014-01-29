@@ -4,8 +4,7 @@
 
 #include "stdafx.h"
 
-// TODO: reference any additional headers you need in STDAFX.H
-// and not in this file
+//some SendInput helper functions. Currently only used by GamepadStick.
 
 void GenerateKey(BYTE vk){
 	INPUT input;
@@ -31,14 +30,6 @@ void GenerateClick(DWORD flags, LONG y, LONG x){
 	input.type = INPUT_MOUSE;
 	input.mi.dy = y;
 	input.mi.dx = x;
-	input.mi.dwFlags = flags;
-	SendInput(1,&input,sizeof(input));
-}
-
-void GenerateClickRelease(DWORD flags){
-	INPUT input;
-	ZeroMemory(&input,sizeof(input));
-	input.type = INPUT_MOUSE;
 	input.mi.dwFlags = flags;
 	SendInput(1,&input,sizeof(input));
 }

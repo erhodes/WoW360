@@ -56,6 +56,8 @@ GamepadButton::~GamepadButton(void)
 
 bool GamepadButton::PressedButton(XINPUT_GAMEPAD gamepad){
 	return (gamepad.wButtons & id);
+	//registers 2 button presses, but can be held.
+	//to reverse this behaviour, add && (!pressed)
 }
 
 bool GamepadButton::PressedTrigger(XINPUT_GAMEPAD gamepad){

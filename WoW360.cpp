@@ -1,14 +1,19 @@
-// WoW360.cpp : Defines the entry point for the console application.
-//
+/*
+	WOW360 by Eric Rhodes, January 2014.
+	This program synthesizes keyboard and mouse events (using the Windows SendInput method)
+	in response to input from an attached XBox 360 controller.
+
+	It's intended purpose is to play World of Warcraft with a 360 controller.
+*/
 #pragma once
 #include "stdafx.h"
-#include "GameInput.h"
 #include "GamepadButton.h"
 #include "GamepadStick.h"
 
 //function definitions
 void IsButtonPressed(GamepadButton* b, XINPUT_STATE* state);
 
+//this function is unnecessary
 bool SetWindow(LPCSTR name){
 	HWND hwnd = FindWindowA(NULL,name);
 	if (hwnd == NULL){
@@ -38,7 +43,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	//set up for the main loop
 	DWORD lastPacketNumber = 0;
-	XINPUT_GAMEPAD gamepad;
+	//create the buttons
 	int numButtons = 16;
 	GamepadButton* buttons;
 	buttons = new GamepadButton[numButtons];
@@ -66,7 +71,6 @@ int _tmain(int argc, _TCHAR* argv[])
 		if (state.dwPacketNumber != lastPacketNumber){
 			lastPacketNumber = state.dwPacketNumber;
 			for (int i = 0; i < numButtons; i++){
-				//IsButtonPressed(&buttons[i],&state);
 				buttons[i].IsPressed(state.Gamepad);
 			}
 			lStick.IsPressed(state.Gamepad);
