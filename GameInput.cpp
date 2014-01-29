@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "GameInput.h"
 
+GameInput::GameInput() {}
 
 GameInput::GameInput(bool (*f)(XINPUT_GAMEPAD, void*), INPUT s, INPUT rs, int x){
 	IsPressed = f;

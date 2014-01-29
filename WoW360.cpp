@@ -13,6 +13,7 @@
 
 //function definitions
 void IsButtonPressed(GamepadButton* b, XINPUT_STATE* state);
+void SetupKeybdInputs(INPUT* s, INPUT* rs, char c);
 bool PressedButton(XINPUT_GAMEPAD, void* x);
 bool PressedTrigger(XINPUT_GAMEPAD, void* x);
 
@@ -78,6 +79,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	releaseInput.ki.dwFlags = KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP;
 	releaseInput.ki.wVk = input.ki.wVk;
 	GameInput i = GameInput(PressedButton,input,releaseInput,XINPUT_GAMEPAD_LEFT_SHOULDER);
+	int numInputs = 2;
+	GameInput* inputs;
+	inputs = new GameInput[numInputs];
+	SetupKeybdInputs(&input,&releaseInput,1);
+	inputs[0] = GameInput(PressedButton, input,releaseInput, XINPUT_GAMEPAD_A);
+	inputs[1] = GameInput(PressedTrigger, input,releaseInput, GamepadButton::LEFT_TRIGGER);
 
 
 	//the main loop!
@@ -86,16 +93,19 @@ int _tmain(int argc, _TCHAR* argv[])
 		if (state.dwPacketNumber != lastPacketNumber){
 			lastPacketNumber = state.dwPacketNumber;
 			for (int i = 0; i < numButtons; i++){
-				buttons[i].IsPressed(state.Gamepad);
+				//buttons[i].IsPressed(state.Gamepad);
 			}
 			lStick.IsPressed(state.Gamepad);
 			rStick.IsPressed(state.Gamepad);
-			i.Poll(state.Gamepad);
+			for (int i = 0; i < numInputs; i++){
+				inputs[i].Poll(state.Gamepad);
+			}
 		}
 	}
 	return 0;
 }
 
+//HELPER FUNCTIONS
 void IsButtonPressed(GamepadButton* b, XINPUT_STATE* state){
 	int x = b->IsPressed(state->Gamepad);
 	switch (x){
@@ -106,7 +116,27 @@ void IsButtonPressed(GamepadButton* b, XINPUT_STATE* state){
 	return;
 }
 
+void SetupKeybdInputs(INPUT* s, INPUT* rs, char c){
+	s->ki.wVk = (UCHAR)VkKeyScan(c);
+	rs->ki.wVk = (UCHAR)VkKeyScan(c);
+}
+
 bool PressedButton(XINPUT_GAMEPAD gamepad, void* x){
 	int *id = (int* )x;
 	return (gamepad.wButtons & *id);
+}
+
+bool PressedTrigger(XINPUT_GAMEPAD gamepad, void* x){
+	BYTE magnitude;
+	int id = *((int* )x);
+	//get the magnitude of the appropriate trigger
+	if (id == GamepadButton::LEFT_TRIGGER){
+		magnitude = gamepad.bLeftTrigger;
+	} else if (id == GamepadButton::RIGHT_TRIGGER){
+		magnitude = gamepad.bRightTrigger;
+	}
+	//determine if the magnitude is over the deadzone
+	if (magnitude > GamepadButton::TRIGGER_THRESHOLD){
+		return true;
+	}else { return false;}
 }

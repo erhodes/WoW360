@@ -3,7 +3,6 @@
 class GamepadButton
 {
 protected:
-	static BYTE TRIGGER_THRESHOLD;
 	INPUT signal, releaseSignal;
 	bool pressed, simulateMouse;
 	BYTE virtualKey;
@@ -13,7 +12,8 @@ protected:
 	bool PressedTrigger(XINPUT_GAMEPAD);
 public:
 	static const int RIGHT_TRIGGER = 5;
-	static const int LEFT_TRIGGER = 6; 
+	static const int LEFT_TRIGGER = 6;
+	static BYTE TRIGGER_THRESHOLD;
 
 	GamepadButton();
 	GamepadButton(int x);

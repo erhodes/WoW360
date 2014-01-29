@@ -11,6 +11,7 @@ class GameInput
 	void GenerateSignal();
 	void GenerateReleaseSignal();
 public:
+	GameInput();
 	GameInput(bool (*f)(XINPUT_GAMEPAD, void*), INPUT s, INPUT rs, int x);
 	~GameInput(void);
 
