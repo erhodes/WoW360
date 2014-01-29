@@ -4,6 +4,8 @@
 
 #include "stdafx.h"
 
+
+
 //some SendInput helper functions. Currently only used by GamepadStick.
 
 void GenerateKey(BYTE vk){

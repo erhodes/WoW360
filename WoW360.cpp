@@ -9,9 +9,12 @@
 #include "stdafx.h"
 #include "GamepadButton.h"
 #include "GamepadStick.h"
+#include "GameInput.h"
 
 //function definitions
 void IsButtonPressed(GamepadButton* b, XINPUT_STATE* state);
+bool PressedButton(XINPUT_GAMEPAD, void* x);
+bool PressedTrigger(XINPUT_GAMEPAD, void* x);
 
 //this function is unnecessary
 bool SetWindow(LPCSTR name){
@@ -44,7 +47,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//set up for the main loop
 	DWORD lastPacketNumber = 0;
 	//create the buttons
-	int numButtons = 16;
+	int numButtons = 15;
 	GamepadButton* buttons;
 	buttons = new GamepadButton[numButtons];
 	buttons[0] = GamepadButton(XINPUT_GAMEPAD_A);
@@ -62,9 +65,21 @@ int _tmain(int argc, _TCHAR* argv[])
 	buttons[12] = GamepadButton(XINPUT_GAMEPAD_RIGHT_THUMB);
 	buttons[13] = GamepadButton(XINPUT_GAMEPAD_LEFT_THUMB);
 	buttons[14] = GamepadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER);
-	buttons[15] = GamepadButton(XINPUT_GAMEPAD_LEFT_SHOULDER);
+	//buttons[15] = GamepadButton(XINPUT_GAMEPAD_LEFT_SHOULDER);
 	GamepadStick lStick(GamepadStick::LEFT_STICK);
 	GamepadStick rStick(GamepadStick::RIGHT_STICK);
+	//some testing here
+	INPUT input;
+	input.type = INPUT_KEYBOARD;
+	input.ki.dwFlags = KEYEVENTF_EXTENDEDKEY;
+	input.ki.wVk = (UCHAR)VkKeyScan('q');
+	INPUT releaseInput;
+	releaseInput.type = INPUT_KEYBOARD;
+	releaseInput.ki.dwFlags = KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP;
+	releaseInput.ki.wVk = input.ki.wVk;
+	GameInput i = GameInput(PressedButton,input,releaseInput,XINPUT_GAMEPAD_LEFT_SHOULDER);
+
+
 	//the main loop!
 	while (true){
 		dwResult = XInputGetState(controllerNumber, &state);
@@ -75,6 +90,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			}
 			lStick.IsPressed(state.Gamepad);
 			rStick.IsPressed(state.Gamepad);
+			i.Poll(state.Gamepad);
 		}
 	}
 	return 0;
@@ -88,4 +104,9 @@ void IsButtonPressed(GamepadButton* b, XINPUT_STATE* state){
 		case 2: GenerateReleaseKey(b->GetSymbol());break;
 	}
 	return;
+}
+
+bool PressedButton(XINPUT_GAMEPAD gamepad, void* x){
+	int *id = (int* )x;
+	return (gamepad.wButtons & *id);
 }
