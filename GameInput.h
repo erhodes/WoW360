@@ -12,6 +12,7 @@ protected:
 	void GenerateSignal();
 	void GenerateReleaseSignal();
 public:
+	static const int LEFT = 2;
 	GameInput();
 	GameInput(bool (*f)(XINPUT_GAMEPAD, void*), INPUT s, INPUT rs, int x);
 	GameInput(bool (*PollFunction)(XINPUT_GAMEPAD, void*), int controllerInput, BYTE keyboardOutput);

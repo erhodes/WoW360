@@ -21,8 +21,10 @@ bool PressedThumbstick(XINPUT_GAMEPAD gamepad, void* data);
 //constant definitions
 const int LEFT = 0;
 const int RIGHT = 1;
-const int UP = 2;
-const int DOWN = 3;
+const int LT_LEFT = 2;
+const int LT_RIGHT = 3;
+const int LT_UP = 4;
+const int LT_DOWN = 5;
 //this function is unnecessary
 bool SetWindow(LPCSTR name){
 	HWND hwnd = FindWindowA(NULL,name);
@@ -76,13 +78,13 @@ int _tmain(int argc, _TCHAR* argv[])
 	GamepadStick lStick(GamepadStick::LEFT_STICK);
 	GamepadStick rStick(GamepadStick::RIGHT_STICK);
 	//some testing here
-	int numInputs = 3;
+	int numInputs = 4;
 	GameInput* inputs;
 	inputs = new GameInput[numInputs];
 	inputs[0] = GameInput(PressedButton,XINPUT_GAMEPAD_A, '1');
 	inputs[1] = GameInput(PressedButton, XINPUT_GAMEPAD_X, 'A');
 	inputs[2] = GameInput(PressedButton, XINPUT_GAMEPAD_B, MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP,0,0);
-	//inputs[3] = MouseMapping(PressedThumbstick, MOUSEEVENTF_MOVE, MOUSEEVENTF_MOVE, 5,0, new int[LEFT,RIGHT]);
+	inputs[3] = GameInput(PressedThumbstick, LT_LEFT,MOUSEEVENTF_MOVE, NULL, -10,0);
 
 
 	//the main loop!
@@ -140,22 +142,13 @@ bool PressedTrigger(XINPUT_GAMEPAD gamepad, void* x){
 }
 
 bool PressedThumbstick(XINPUT_GAMEPAD gamepad, void* data){
-	SHORT x = 0;
-	SHORT y = 0;
-	SHORT deadzone = 100;
-	int* helper = (int*)data;
-	int id = *helper;
-	int direction = *(helper+1);
-	cout << id << "," << helper << endl;
+	int id = *(int*)(data);
+	short deadzone = 4000;
 	switch (id){
-		case LEFT:  y = gamepad.sThumbLY; x = gamepad.sThumbLX; break;
-		case RIGHT:  y = gamepad.sThumbRY;x = gamepad.sThumbRX; break;
-	}
-	switch (direction){
-		case LEFT: return (x>deadzone); break;
-		case RIGHT: return (x < deadzone); break;
-		case UP: return (y > deadzone); break;
-		case DOWN: return (y < deadzone); break;
+		case LT_UP: return (gamepad.sThumbLY > deadzone); break;
+		case LT_DOWN: return (-gamepad.sThumbLY > deadzone); break;
+		case LT_LEFT: return (gamepad.sThumbLY > deadzone); break;
+		case LT_RIGHT: return (-gamepad.sThumbLY > deadzone); break;
 	}
 	return false;
 }

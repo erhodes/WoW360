@@ -33,7 +33,7 @@ GameInput::GameInput(bool (*PollFunction)(XINPUT_GAMEPAD, void*), int controller
 	signal.type = INPUT_MOUSE;
 	signal.mi.dy = y;
 	signal.mi.dx = x;
-	signal.mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
+	signal.mi.dwFlags = flags;
 	ZeroMemory(&releaseSignal,sizeof(releaseSignal));
 	releaseSignal.type = INPUT_MOUSE;
 	releaseSignal.mi.dy = y;
