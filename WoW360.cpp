@@ -16,7 +16,13 @@ void IsButtonPressed(GamepadButton* b, XINPUT_STATE* state);
 void SetupKeybdInputs(INPUT* s, INPUT* rs, char c);
 bool PressedButton(XINPUT_GAMEPAD, void* x);
 bool PressedTrigger(XINPUT_GAMEPAD, void* x);
+bool PressedThumbstick(XINPUT_GAMEPAD gamepad, void* data);
 
+//constant definitions
+const int LEFT = 0;
+const int RIGHT = 1;
+const int UP = 2;
+const int DOWN = 3;
 //this function is unnecessary
 bool SetWindow(LPCSTR name){
 	HWND hwnd = FindWindowA(NULL,name);
@@ -70,21 +76,13 @@ int _tmain(int argc, _TCHAR* argv[])
 	GamepadStick lStick(GamepadStick::LEFT_STICK);
 	GamepadStick rStick(GamepadStick::RIGHT_STICK);
 	//some testing here
-	INPUT input;
-	input.type = INPUT_KEYBOARD;
-	input.ki.dwFlags = KEYEVENTF_EXTENDEDKEY;
-	input.ki.wVk = (UCHAR)VkKeyScan('q');
-	INPUT releaseInput;
-	releaseInput.type = INPUT_KEYBOARD;
-	releaseInput.ki.dwFlags = KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP;
-	releaseInput.ki.wVk = input.ki.wVk;
-	GameInput i = GameInput(PressedButton,input,releaseInput,XINPUT_GAMEPAD_LEFT_SHOULDER);
-	int numInputs = 2;
+	int numInputs = 3;
 	GameInput* inputs;
 	inputs = new GameInput[numInputs];
-	SetupKeybdInputs(&input,&releaseInput,1);
-	inputs[0] = GameInput(PressedButton, input,releaseInput, XINPUT_GAMEPAD_A);
-	inputs[1] = GameInput(PressedTrigger, input,releaseInput, GamepadButton::LEFT_TRIGGER);
+	inputs[0] = GameInput(PressedButton,XINPUT_GAMEPAD_A, '1');
+	inputs[1] = GameInput(PressedButton, XINPUT_GAMEPAD_X, 'A');
+	inputs[2] = GameInput(PressedButton, XINPUT_GAMEPAD_B, MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP,0,0);
+	//inputs[3] = MouseMapping(PressedThumbstick, MOUSEEVENTF_MOVE, MOUSEEVENTF_MOVE, 5,0, new int[LEFT,RIGHT]);
 
 
 	//the main loop!
@@ -95,8 +93,8 @@ int _tmain(int argc, _TCHAR* argv[])
 			for (int i = 0; i < numButtons; i++){
 				//buttons[i].IsPressed(state.Gamepad);
 			}
-			lStick.IsPressed(state.Gamepad);
-			rStick.IsPressed(state.Gamepad);
+			//lStick.IsPressed(state.Gamepad);
+			//rStick.IsPressed(state.Gamepad);
 			for (int i = 0; i < numInputs; i++){
 				inputs[i].Poll(state.Gamepad);
 			}
@@ -122,21 +120,42 @@ void SetupKeybdInputs(INPUT* s, INPUT* rs, char c){
 }
 
 bool PressedButton(XINPUT_GAMEPAD gamepad, void* x){
-	int *id = (int* )x;
-	return (gamepad.wButtons & *id);
+	int id = *((int* )x);
+	return (gamepad.wButtons & id);
 }
 
 bool PressedTrigger(XINPUT_GAMEPAD gamepad, void* x){
-	BYTE magnitude;
+	BYTE magnitude = 0;
 	int id = *((int* )x);
 	//get the magnitude of the appropriate trigger
-	if (id == GamepadButton::LEFT_TRIGGER){
+	if (id == LEFT){
 		magnitude = gamepad.bLeftTrigger;
-	} else if (id == GamepadButton::RIGHT_TRIGGER){
+	} else if (id == RIGHT){
 		magnitude = gamepad.bRightTrigger;
 	}
 	//determine if the magnitude is over the deadzone
 	if (magnitude > GamepadButton::TRIGGER_THRESHOLD){
 		return true;
 	}else { return false;}
+}
+
+bool PressedThumbstick(XINPUT_GAMEPAD gamepad, void* data){
+	SHORT x = 0;
+	SHORT y = 0;
+	SHORT deadzone = 100;
+	int* helper = (int*)data;
+	int id = *helper;
+	int direction = *(helper+1);
+	cout << id << "," << helper << endl;
+	switch (id){
+		case LEFT:  y = gamepad.sThumbLY; x = gamepad.sThumbLX; break;
+		case RIGHT:  y = gamepad.sThumbRY;x = gamepad.sThumbRX; break;
+	}
+	switch (direction){
+		case LEFT: return (x>deadzone); break;
+		case RIGHT: return (x < deadzone); break;
+		case UP: return (y > deadzone); break;
+		case DOWN: return (y < deadzone); break;
+	}
+	return false;
 }

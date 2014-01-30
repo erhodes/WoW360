@@ -3,6 +3,7 @@
 
 class GameInput
 {
+protected:
 	INPUT signal, releaseSignal;
 	int id;
 	bool pressed;
@@ -13,6 +14,8 @@ class GameInput
 public:
 	GameInput();
 	GameInput(bool (*f)(XINPUT_GAMEPAD, void*), INPUT s, INPUT rs, int x);
+	GameInput(bool (*PollFunction)(XINPUT_GAMEPAD, void*), int controllerInput, BYTE keyboardOutput);
+	GameInput(bool (*PollFunction)(XINPUT_GAMEPAD, void*), int controllerInput, DWORD flags,DWORD releaseFlags, int x, int y);
 	~GameInput(void);
 
 	
