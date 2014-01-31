@@ -12,8 +12,6 @@
 #include "GameInput.h"
 
 //function definitions
-void IsButtonPressed(GamepadButton* b, XINPUT_STATE* state);
-void SetupKeybdInputs(INPUT* s, INPUT* rs, char c);
 bool PressedButton(XINPUT_GAMEPAD, void* x);
 bool PressedTrigger(XINPUT_GAMEPAD, void* x);
 bool PressedThumbstick(XINPUT_GAMEPAD gamepad, void* data);
@@ -56,35 +54,30 @@ int _tmain(int argc, _TCHAR* argv[])
 	//set up for the main loop
 	DWORD lastPacketNumber = 0;
 	//create the buttons
-	int numButtons = 15;
-	GamepadButton* buttons;
-	buttons = new GamepadButton[numButtons];
-	buttons[0] = GamepadButton(XINPUT_GAMEPAD_A);
-	buttons[1] = GamepadButton(XINPUT_GAMEPAD_B);
-	buttons[2] = GamepadButton(XINPUT_GAMEPAD_X);
-	buttons[3] = GamepadButton(XINPUT_GAMEPAD_Y);
-	buttons[4] = GamepadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER);
-	buttons[5] = GamepadButton(XINPUT_GAMEPAD_DPAD_UP);
-	buttons[6] = GamepadButton(XINPUT_GAMEPAD_DPAD_LEFT);
-	buttons[7] = GamepadButton(XINPUT_GAMEPAD_DPAD_DOWN);
-	buttons[8] = GamepadButton(XINPUT_GAMEPAD_DPAD_RIGHT);
-	buttons[9] = GamepadButton(XINPUT_GAMEPAD_START);
-	buttons[10] = GamepadButton(GamepadButton::LEFT_TRIGGER);
-	buttons[11] = GamepadButton(GamepadButton::RIGHT_TRIGGER);
-	buttons[12] = GamepadButton(XINPUT_GAMEPAD_RIGHT_THUMB);
-	buttons[13] = GamepadButton(XINPUT_GAMEPAD_LEFT_THUMB);
-	buttons[14] = GamepadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER);
-	//buttons[15] = GamepadButton(XINPUT_GAMEPAD_LEFT_SHOULDER);
-	GamepadStick lStick(GamepadStick::LEFT_STICK);
-	GamepadStick rStick(GamepadStick::RIGHT_STICK);
 	//some testing here
-	int numInputs = 4;
+	int numInputs = 20;
 	GameInput* inputs;
 	inputs = new GameInput[numInputs];
 	inputs[0] = GameInput(PressedButton,XINPUT_GAMEPAD_A, '1');
-	inputs[1] = GameInput(PressedButton, XINPUT_GAMEPAD_X, 'A');
-	inputs[2] = GameInput(PressedButton, XINPUT_GAMEPAD_B, MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP,0,0);
-	inputs[3] = GameInput(PressedThumbstick, LT_LEFT,MOUSEEVENTF_MOVE, NULL, -10,0);
+	inputs[1] = GameInput(PressedButton,XINPUT_GAMEPAD_B, VK_ESCAPE);
+	inputs[2] = GameInput(PressedButton,XINPUT_GAMEPAD_X, '2');
+	inputs[3] = GameInput(PressedButton,XINPUT_GAMEPAD_Y, '3');
+	inputs[4] = GameInput(PressedButton,XINPUT_GAMEPAD_DPAD_DOWN, '4');
+	inputs[5] = GameInput(PressedButton,XINPUT_GAMEPAD_DPAD_UP, '5');
+	inputs[6] = GameInput(PressedButton,XINPUT_GAMEPAD_DPAD_LEFT, '6');
+	inputs[7] = GameInput(PressedButton,XINPUT_GAMEPAD_DPAD_RIGHT, '7');
+	inputs[8] = GameInput(PressedButton,XINPUT_GAMEPAD_LEFT_SHOULDER, 'q');
+	inputs[9] = GameInput(PressedButton,XINPUT_GAMEPAD_RIGHT_SHOULDER, 'e');
+	inputs[10] = GameInput(PressedTrigger,LEFT,VK_LCONTROL);
+	inputs[11] = GameInput(PressedTrigger,LEFT,VK_RSHIFT);
+	inputs[12] = GameInput(PressedButton,XINPUT_GAMEPAD_START,VK_SPACE);
+	inputs[13] = GameInput(PressedButton,XINPUT_GAMEPAD_BACK,VK_TAB);
+	inputs[14] = GameInput(PressedButton,XINPUT_GAMEPAD_LEFT_THUMB,MOUSEEVENTF_LEFTDOWN,MOUSEEVENTF_LEFTUP,0,0);
+	inputs[15] = GameInput(PressedButton,XINPUT_GAMEPAD_LEFT_THUMB,MOUSEEVENTF_RIGHTDOWN,MOUSEEVENTF_RIGHTUP,0,0);
+	inputs[16] = GameInput(PressedTrigger,LT_LEFT,'a');
+	inputs[17] = GameInput(PressedTrigger,LT_RIGHT,'d');
+	inputs[18] = GameInput(PressedTrigger,LT_UP,'w');
+	inputs[19] = GameInput(PressedTrigger,LT_DOWN,'s');
 
 
 	//the main loop!
@@ -92,11 +85,6 @@ int _tmain(int argc, _TCHAR* argv[])
 		dwResult = XInputGetState(controllerNumber, &state);
 		if (state.dwPacketNumber != lastPacketNumber){
 			lastPacketNumber = state.dwPacketNumber;
-			for (int i = 0; i < numButtons; i++){
-				//buttons[i].IsPressed(state.Gamepad);
-			}
-			//lStick.IsPressed(state.Gamepad);
-			//rStick.IsPressed(state.Gamepad);
 			for (int i = 0; i < numInputs; i++){
 				inputs[i].Poll(state.Gamepad);
 			}
@@ -106,21 +94,6 @@ int _tmain(int argc, _TCHAR* argv[])
 }
 
 //HELPER FUNCTIONS
-void IsButtonPressed(GamepadButton* b, XINPUT_STATE* state){
-	int x = b->IsPressed(state->Gamepad);
-	switch (x){
-		case 0: break;
-		case 1: GenerateKey(b->GetSymbol()); break;
-		case 2: GenerateReleaseKey(b->GetSymbol());break;
-	}
-	return;
-}
-
-void SetupKeybdInputs(INPUT* s, INPUT* rs, char c){
-	s->ki.wVk = (UCHAR)VkKeyScan(c);
-	rs->ki.wVk = (UCHAR)VkKeyScan(c);
-}
-
 bool PressedButton(XINPUT_GAMEPAD gamepad, void* x){
 	int id = *((int* )x);
 	return (gamepad.wButtons & id);
