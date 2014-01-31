@@ -11,7 +11,7 @@ const int RT_LEFT = 6;
 const int RT_RIGHT = 7;
 const int RT_UP = 8;
 const int RT_DOWN = 9;
-const int scrollSpeed = 8;
+const int scrollSpeed = 5;
 
 class GameInput
 {
@@ -29,7 +29,7 @@ public:
 	GameInput(bool (*PollFunction)(XINPUT_GAMEPAD, void*), int controllerInput, DWORD flags,DWORD releaseFlags, int x, int y);
 	~GameInput(void);
 
-	void Poll(XINPUT_GAMEPAD gamepad);
+	virtual void Poll(XINPUT_GAMEPAD gamepad);
 
 	static bool PressedButton(XINPUT_GAMEPAD, void* x);
 	static bool PressedTrigger(XINPUT_GAMEPAD, void* x);

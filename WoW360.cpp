@@ -42,10 +42,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	DWORD lastPacketNumber = 0;
 	//create the buttons
 	//some testing here
-	int numInputs = 24;
+	int numInputs = 20;
 	GameInput* inputs;
 	inputs = new GameInput[numInputs];
-	inputs[0] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_A, MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE, 0,scrollSpeed);
+	inputs[0] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_A, '1');
 	inputs[1] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_B, VK_ESCAPE);
 	inputs[2] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_X, '2');
 	inputs[3] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_Y, '3');
@@ -65,12 +65,15 @@ int _tmain(int argc, _TCHAR* argv[])
 	inputs[17] = GameInput(GameInput::PressedThumbstick,LT_RIGHT,'d');
 	inputs[18] = GameInput(GameInput::PressedThumbstick,LT_UP,'w');
 	inputs[19] = GameInput(GameInput::PressedThumbstick,LT_DOWN,'s');
-	inputs[20] = GameInput(GameInput::PressedThumbstick,RT_DOWN,MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE, 0,scrollSpeed);
-	inputs[21] = GameInput(GameInput::PressedThumbstick,RT_UP,MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE, 0,-scrollSpeed);
-	inputs[22] = GameInput(GameInput::PressedThumbstick,RT_LEFT,MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE, -scrollSpeed,0);
-	inputs[23] = GameInput(GameInput::PressedThumbstick,RT_RIGHT,MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE,scrollSpeed,0);
+	int numMouseInputs = 4;
+	MouseMapping* mouseInputs = new MouseMapping[numMouseInputs];
+	mouseInputs[0] = MouseMapping(GameInput::PressedThumbstick,RT_DOWN,MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE, 0,scrollSpeed);
+	mouseInputs[1] = MouseMapping(GameInput::PressedThumbstick,RT_UP,MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE, 0,-scrollSpeed);
+	mouseInputs[2] = MouseMapping(GameInput::PressedThumbstick,RT_LEFT,MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE, -scrollSpeed,0);
+	mouseInputs[3] = MouseMapping(GameInput::PressedThumbstick,RT_RIGHT,MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE,scrollSpeed,0);
 
-	MouseMapping test = MouseMapping(GameInput::PressedThumbstick,RT_DOWN,MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE,0,scrollSpeed);
+
+	//MouseMapping test = MouseMapping(GameInput::PressedThumbstick,RT_DOWN,MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE,0,scrollSpeed);
 
 	//the main loop!
 	DWORD timeElapsed = GetTickCount();
@@ -83,9 +86,12 @@ int _tmain(int argc, _TCHAR* argv[])
 			//lastPacketNumber = state.dwPacketNumber;
 			timeElapsed = GetTickCount();
 			for (int i = 0; i < numInputs; i++){
-				//inputs[i].Poll(state.Gamepad);
+				inputs[i].Poll(state.Gamepad);
 			}
-			test.Poll(state.Gamepad);
+			for (int i = 0; i < numMouseInputs; i++){
+				mouseInputs[i].Poll(state.Gamepad);
+			}
+			//test.Poll(state.Gamepad);
 		}
 	}
 	return 0;

@@ -5,10 +5,12 @@ class MouseMapping :
 {
 protected:
 	int cyclesHeld;
-	long baseSpeed;
-	long* speed;
-	static const int maxCyclesHeld = 40;
+	long baseDy,baseDx;
+	LONG* speed;
+	static const int maxCyclesHeld = 30;
+	static const int cursorAcceleration = 2;
 public:
+	MouseMapping();
 	MouseMapping(bool (*PollFunction)(XINPUT_GAMEPAD, void*), int controllerInput, DWORD flags,DWORD releaseFlags, int x, int y);
 	~MouseMapping(void);
 
