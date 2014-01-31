@@ -32,8 +32,8 @@ GameInput::GameInput(bool (*PollFunction)(XINPUT_GAMEPAD, void*), int controller
 	signal.mi.dwFlags = flags;
 	ZeroMemory(&releaseSignal,sizeof(releaseSignal));
 	releaseSignal.type = INPUT_MOUSE;
-	releaseSignal.mi.dy = y;
-	releaseSignal.mi.dx = x;
+	releaseSignal.mi.dy = 0;
+	releaseSignal.mi.dx = 0;
 	releaseSignal.mi.dwFlags = releaseFlags;
 }
 

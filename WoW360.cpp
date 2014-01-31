@@ -44,7 +44,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	int numInputs = 24;
 	GameInput* inputs;
 	inputs = new GameInput[numInputs];
-	inputs[0] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_A, '1');
+	inputs[0] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_A, MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE, 0,scrollSpeed);
 	inputs[1] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_B, VK_ESCAPE);
 	inputs[2] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_X, '2');
 	inputs[3] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_Y, '3');
@@ -70,10 +70,15 @@ int _tmain(int argc, _TCHAR* argv[])
 	inputs[23] = GameInput(GameInput::PressedThumbstick,RT_RIGHT,MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE,scrollSpeed,0);
 
 	//the main loop!
+	DWORD timeElapsed = GetTickCount();
+	DWORD timeInterval = 10;
 	while (true){
+
 		dwResult = XInputGetState(controllerNumber, &state);
-		if (state.dwPacketNumber != lastPacketNumber){
-			lastPacketNumber = state.dwPacketNumber;
+		if (GetTickCount() > timeElapsed +timeInterval){
+		//if (state.dwPacketNumber != lastPacketNumber){
+			//lastPacketNumber = state.dwPacketNumber;
+			timeElapsed = GetTickCount();
 			for (int i = 0; i < numInputs; i++){
 				inputs[i].Poll(state.Gamepad);
 			}

@@ -11,7 +11,7 @@ const int RT_LEFT = 6;
 const int RT_RIGHT = 7;
 const int RT_UP = 8;
 const int RT_DOWN = 9;
-const int scrollSpeed = 3;
+const int scrollSpeed = 8;
 
 class GameInput
 {
