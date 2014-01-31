@@ -7,23 +7,9 @@
 */
 #pragma once
 #include "stdafx.h"
-#include "GamepadButton.h"
-#include "GamepadStick.h"
 #include "GameInput.h"
 
-//function definitions
-bool PressedButton(XINPUT_GAMEPAD, void* x);
-bool PressedTrigger(XINPUT_GAMEPAD, void* x);
-bool PressedThumbstick(XINPUT_GAMEPAD gamepad, void* data);
-
-//constant definitions
-const int LEFT = 0;
-const int RIGHT = 1;
-const int LT_LEFT = 2;
-const int LT_RIGHT = 3;
-const int LT_UP = 4;
-const int LT_DOWN = 5;
-//this function is unnecessary
+//this function checks to see if the given window is open.
 bool SetWindow(LPCSTR name){
 	HWND hwnd = FindWindowA(NULL,name);
 	if (hwnd == NULL){
@@ -55,30 +41,33 @@ int _tmain(int argc, _TCHAR* argv[])
 	DWORD lastPacketNumber = 0;
 	//create the buttons
 	//some testing here
-	int numInputs = 20;
+	int numInputs = 24;
 	GameInput* inputs;
 	inputs = new GameInput[numInputs];
-	inputs[0] = GameInput(PressedButton,XINPUT_GAMEPAD_A, '1');
-	inputs[1] = GameInput(PressedButton,XINPUT_GAMEPAD_B, VK_ESCAPE);
-	inputs[2] = GameInput(PressedButton,XINPUT_GAMEPAD_X, '2');
-	inputs[3] = GameInput(PressedButton,XINPUT_GAMEPAD_Y, '3');
-	inputs[4] = GameInput(PressedButton,XINPUT_GAMEPAD_DPAD_DOWN, '4');
-	inputs[5] = GameInput(PressedButton,XINPUT_GAMEPAD_DPAD_UP, '5');
-	inputs[6] = GameInput(PressedButton,XINPUT_GAMEPAD_DPAD_LEFT, '6');
-	inputs[7] = GameInput(PressedButton,XINPUT_GAMEPAD_DPAD_RIGHT, '7');
-	inputs[8] = GameInput(PressedButton,XINPUT_GAMEPAD_LEFT_SHOULDER, 'q');
-	inputs[9] = GameInput(PressedButton,XINPUT_GAMEPAD_RIGHT_SHOULDER, 'e');
-	inputs[10] = GameInput(PressedTrigger,LEFT,VK_LCONTROL);
-	inputs[11] = GameInput(PressedTrigger,LEFT,VK_RSHIFT);
-	inputs[12] = GameInput(PressedButton,XINPUT_GAMEPAD_START,VK_SPACE);
-	inputs[13] = GameInput(PressedButton,XINPUT_GAMEPAD_BACK,VK_TAB);
-	inputs[14] = GameInput(PressedButton,XINPUT_GAMEPAD_LEFT_THUMB,MOUSEEVENTF_LEFTDOWN,MOUSEEVENTF_LEFTUP,0,0);
-	inputs[15] = GameInput(PressedButton,XINPUT_GAMEPAD_LEFT_THUMB,MOUSEEVENTF_RIGHTDOWN,MOUSEEVENTF_RIGHTUP,0,0);
-	inputs[16] = GameInput(PressedTrigger,LT_LEFT,'a');
-	inputs[17] = GameInput(PressedTrigger,LT_RIGHT,'d');
-	inputs[18] = GameInput(PressedTrigger,LT_UP,'w');
-	inputs[19] = GameInput(PressedTrigger,LT_DOWN,'s');
-
+	inputs[0] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_A, '1');
+	inputs[1] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_B, VK_ESCAPE);
+	inputs[2] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_X, '2');
+	inputs[3] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_Y, '3');
+	inputs[4] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_DPAD_UP, '4');
+	inputs[5] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_DPAD_LEFT, '5');
+	inputs[6] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_DPAD_DOWN, '6');
+	inputs[7] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_DPAD_RIGHT, '7');
+	inputs[8] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_LEFT_SHOULDER, 'q');
+	inputs[9] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_RIGHT_SHOULDER, 'e');
+	inputs[10] = GameInput(GameInput::PressedTrigger,LEFT,VK_LCONTROL);
+	inputs[11] = GameInput(GameInput::PressedTrigger,RIGHT,VK_RSHIFT);
+	inputs[12] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_START,VK_SPACE);
+	inputs[13] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_BACK,VK_TAB);
+	inputs[14] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_LEFT_THUMB,MOUSEEVENTF_LEFTDOWN,MOUSEEVENTF_LEFTUP,0,0);
+	inputs[15] = GameInput(GameInput::PressedButton,XINPUT_GAMEPAD_RIGHT_THUMB,MOUSEEVENTF_RIGHTDOWN,MOUSEEVENTF_RIGHTUP,0,0);
+	inputs[16] = GameInput(GameInput::PressedThumbstick,LT_LEFT,'a');
+	inputs[17] = GameInput(GameInput::PressedThumbstick,LT_RIGHT,'d');
+	inputs[18] = GameInput(GameInput::PressedThumbstick,LT_UP,'w');
+	inputs[19] = GameInput(GameInput::PressedThumbstick,LT_DOWN,'s');
+	inputs[20] = GameInput(GameInput::PressedThumbstick,RT_DOWN,MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE, 0,scrollSpeed);
+	inputs[21] = GameInput(GameInput::PressedThumbstick,RT_UP,MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE, 0,-scrollSpeed);
+	inputs[22] = GameInput(GameInput::PressedThumbstick,RT_LEFT,MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE, -scrollSpeed,0);
+	inputs[23] = GameInput(GameInput::PressedThumbstick,RT_RIGHT,MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE,scrollSpeed,0);
 
 	//the main loop!
 	while (true){
@@ -91,37 +80,4 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 	}
 	return 0;
-}
-
-//HELPER FUNCTIONS
-bool PressedButton(XINPUT_GAMEPAD gamepad, void* x){
-	int id = *((int* )x);
-	return (gamepad.wButtons & id);
-}
-
-bool PressedTrigger(XINPUT_GAMEPAD gamepad, void* x){
-	BYTE magnitude = 0;
-	int id = *((int* )x);
-	//get the magnitude of the appropriate trigger
-	if (id == LEFT){
-		magnitude = gamepad.bLeftTrigger;
-	} else if (id == RIGHT){
-		magnitude = gamepad.bRightTrigger;
-	}
-	//determine if the magnitude is over the deadzone
-	if (magnitude > GamepadButton::TRIGGER_THRESHOLD){
-		return true;
-	}else { return false;}
-}
-
-bool PressedThumbstick(XINPUT_GAMEPAD gamepad, void* data){
-	int id = *(int*)(data);
-	short deadzone = 4000;
-	switch (id){
-		case LT_UP: return (gamepad.sThumbLY > deadzone); break;
-		case LT_DOWN: return (-gamepad.sThumbLY > deadzone); break;
-		case LT_LEFT: return (gamepad.sThumbLY > deadzone); break;
-		case LT_RIGHT: return (-gamepad.sThumbLY > deadzone); break;
-	}
-	return false;
 }

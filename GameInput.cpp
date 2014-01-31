@@ -3,18 +3,13 @@
 
 GameInput::GameInput() {}
 
-GameInput::GameInput(bool (*f)(XINPUT_GAMEPAD, void*), INPUT s, INPUT rs, int x){
-	IsPressed = f;
-	signal = s;
-	releaseSignal = rs;
-	pressed = false;
-	id = x;
-	cout << "making whatever" << endl;
-}
 //constructor for a mapping to a keyboard button
 GameInput::GameInput(bool (*PollFunction)(XINPUT_GAMEPAD, void*), int controllerInput, BYTE keyboardOutput) {
+	pressed = false;
 	IsPressed = PollFunction;
 	id = controllerInput;
+	if ((keyboardOutput >= 97) && (keyboardOutput <= 122))
+		keyboardOutput = (UCHAR)VkKeyScan(keyboardOutput);
 	ZeroMemory(&signal,sizeof(signal));
 	signal.type = INPUT_KEYBOARD;
 	signal.ki.dwFlags = KEYEVENTF_EXTENDEDKEY;
@@ -27,6 +22,7 @@ GameInput::GameInput(bool (*PollFunction)(XINPUT_GAMEPAD, void*), int controller
 
 //constructor for mapping to a mouse event
 GameInput::GameInput(bool (*PollFunction)(XINPUT_GAMEPAD, void*), int controllerInput, DWORD flags,DWORD releaseFlags, int x, int y){
+	pressed = false;
 	id = controllerInput;
 	IsPressed = PollFunction;
 	ZeroMemory(&signal,sizeof(signal));
@@ -70,3 +66,39 @@ void GameInput::Poll(XINPUT_GAMEPAD gamepad){
 	}
 }
 
+bool GameInput::PressedButton(XINPUT_GAMEPAD gamepad, void* x){
+	int id = *((int* )x);
+	return (gamepad.wButtons & id);
+}
+
+bool GameInput::PressedTrigger(XINPUT_GAMEPAD gamepad, void* x){
+	BYTE magnitude = 0;
+	int id = *((int* )x);
+	//get the magnitude of the appropriate trigger
+	if (id == LEFT){
+		magnitude = gamepad.bLeftTrigger;
+	} else if (id == RIGHT){
+		magnitude = gamepad.bRightTrigger;
+	}
+	else { cout << "that aint right" << endl; }
+	//determine if the magnitude is over the deadzone
+	if (magnitude > 50){
+		return true;
+	}else { return false;}
+}
+
+bool GameInput::PressedThumbstick(XINPUT_GAMEPAD gamepad, void* data){
+	int id = *(int*)(data);
+	short deadzone = 10000;
+	switch (id){
+		case LT_UP: return (gamepad.sThumbLY > deadzone); break;
+		case LT_DOWN: return (-gamepad.sThumbLY > deadzone); break;
+		case LT_RIGHT: return (gamepad.sThumbLX > deadzone); break;
+		case LT_LEFT: return (-gamepad.sThumbLX > deadzone); break;
+		case RT_UP: return (gamepad.sThumbRY > deadzone); break;
+		case RT_DOWN: return (-gamepad.sThumbRY > deadzone); break;
+		case RT_RIGHT: return (gamepad.sThumbRX > deadzone); break;
+		case RT_LEFT: return (-gamepad.sThumbRX > deadzone); break;
+	}
+	return false;
+}

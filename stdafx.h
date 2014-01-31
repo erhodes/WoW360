@@ -16,10 +16,4 @@
 
 using namespace std;
 
-
-void GenerateKey(BYTE vk);
-void GenerateReleaseKey(BYTE vk);
-void GenerateClick(DWORD flags, LONG y, LONG x);
-void GenerateClickRelease(DWORD flags);
-
 // TODO: reference additional headers your program requires here
