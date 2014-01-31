@@ -1,3 +1,9 @@
+/*
+GameInput.cpp
+Written by Eric Rhodes, January 2014
+See GameInput.h for summary
+*/
+
 #include "StdAfx.h"
 #include "GameInput.h"
 
@@ -65,7 +71,8 @@ void GameInput::Poll(XINPUT_GAMEPAD gamepad){
 		GenerateReleaseSignal();
 	}
 }
-
+//These functions check to a specific controller input. One of them must be passed to the constructor.
+//The function passed determines what kind of controller input the object will listen for
 bool GameInput::PressedButton(XINPUT_GAMEPAD gamepad, void* x){
 	int id = *((int* )x);
 	return (gamepad.wButtons & id);

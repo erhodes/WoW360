@@ -1,3 +1,13 @@
+/*
+ GameInput.h
+ Written by Eric Rhodes, January 2014
+
+ This class maps a specific input from a controller to a mouse or keyboard event.
+ The event is synthesized using SendInput
+ Different constructors are available for synthesizing either a mouse or keyboard event
+
+*/
+
 #pragma once
 #include "stdafx.h"
 

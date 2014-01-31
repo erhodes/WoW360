@@ -38,10 +38,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		cout << "No controller detected \n";
 	}
 
-	//set up for the main loop
-	DWORD lastPacketNumber = 0;
-	//create the buttons
-	//some testing here
+	//create the button mappings
 	int numInputs = 20;
 	GameInput* inputs;
 	inputs = new GameInput[numInputs];
@@ -65,6 +62,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	inputs[17] = GameInput(GameInput::PressedThumbstick,LT_RIGHT,'d');
 	inputs[18] = GameInput(GameInput::PressedThumbstick,LT_UP,'w');
 	inputs[19] = GameInput(GameInput::PressedThumbstick,LT_DOWN,'s');
+	//mouse mappings allow for cursor acceleration. Due to the nature of arrays and overloading, they need to be in a separate array
 	int numMouseInputs = 4;
 	MouseMapping* mouseInputs = new MouseMapping[numMouseInputs];
 	mouseInputs[0] = MouseMapping(GameInput::PressedThumbstick,RT_DOWN,MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE, 0,scrollSpeed);
@@ -72,18 +70,13 @@ int _tmain(int argc, _TCHAR* argv[])
 	mouseInputs[2] = MouseMapping(GameInput::PressedThumbstick,RT_LEFT,MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE, -scrollSpeed,0);
 	mouseInputs[3] = MouseMapping(GameInput::PressedThumbstick,RT_RIGHT,MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE,scrollSpeed,0);
 
-
-	//MouseMapping test = MouseMapping(GameInput::PressedThumbstick,RT_DOWN,MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE,0,scrollSpeed);
-
-	//the main loop!
+	//set up a timer
 	DWORD timeElapsed = GetTickCount();
 	DWORD timeInterval = 10;
+	//the main loop!
 	while (true){
-
 		dwResult = XInputGetState(controllerNumber, &state);
 		if (GetTickCount() > timeElapsed +timeInterval){
-		//if (state.dwPacketNumber != lastPacketNumber){
-			//lastPacketNumber = state.dwPacketNumber;
 			timeElapsed = GetTickCount();
 			for (int i = 0; i < numInputs; i++){
 				inputs[i].Poll(state.Gamepad);
@@ -91,7 +84,6 @@ int _tmain(int argc, _TCHAR* argv[])
 			for (int i = 0; i < numMouseInputs; i++){
 				mouseInputs[i].Poll(state.Gamepad);
 			}
-			//test.Poll(state.Gamepad);
 		}
 	}
 	return 0;
