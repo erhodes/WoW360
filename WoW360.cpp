@@ -8,6 +8,7 @@
 #pragma once
 #include "stdafx.h"
 #include "GameInput.h"
+#include "MouseMapping.h"
 
 //this function checks to see if the given window is open.
 bool SetWindow(LPCSTR name){
@@ -69,6 +70,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	inputs[22] = GameInput(GameInput::PressedThumbstick,RT_LEFT,MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE, -scrollSpeed,0);
 	inputs[23] = GameInput(GameInput::PressedThumbstick,RT_RIGHT,MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE,scrollSpeed,0);
 
+	MouseMapping test = MouseMapping(GameInput::PressedThumbstick,RT_DOWN,MOUSEEVENTF_MOVE,MOUSEEVENTF_MOVE,0,scrollSpeed);
+
 	//the main loop!
 	DWORD timeElapsed = GetTickCount();
 	DWORD timeInterval = 10;
@@ -80,8 +83,9 @@ int _tmain(int argc, _TCHAR* argv[])
 			//lastPacketNumber = state.dwPacketNumber;
 			timeElapsed = GetTickCount();
 			for (int i = 0; i < numInputs; i++){
-				inputs[i].Poll(state.Gamepad);
+				//inputs[i].Poll(state.Gamepad);
 			}
+			test.Poll(state.Gamepad);
 		}
 	}
 	return 0;
